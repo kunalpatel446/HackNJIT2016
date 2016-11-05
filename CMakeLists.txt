@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project(HackNJIT2016)
+find_package(OpenCV REQUIRED)
+add_executable(Main Main.cpp)
+target_link_libraries(Main ${OpenCV_LIBS})
