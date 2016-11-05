@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <array>
 #include <cmath>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
@@ -12,15 +13,18 @@ using namespace cv;
 CGEventRef move;
 int main()
 {
-	
+	while(true)
+	{
+		moveCursor(getEyePos());
+	}
 	return 0;
 }
 void moveCursor(int x, y)
 {
 	move = CGEventCreateMouseEvent(NULL, kCGEventMouseMoved, CGPointMake(200, 200), kCGMouseButtonLeft);
-
 }
-int *getEyePos()
+std::array<int, 2> getEyePos(std::string LR)
 {
-	
+	std::array eyePosition
+	return eyePosition;
 }
