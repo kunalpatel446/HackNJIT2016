@@ -13,6 +13,16 @@ using namespace cv;
 CGEventRef move;
 int main()
 {
+	std::cout << "Program initiated by user" << std::endl;
+	VideoCapture cap(0);
+	if (!cap.isOpened())
+	{
+		std::cout << "ERROR: Webcam failed to initialize"
+		return -1;
+	}
+	else
+		std::cout << "Webcam initiated" << std::endl;
+	namedWindow("Hack NJIT 2016", CV_WINDOW_AUTOSIZE);
 	while(true)
 	{
 		moveCursor(getEyePos());
