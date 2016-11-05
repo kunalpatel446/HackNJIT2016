@@ -25,6 +25,6 @@ void moveCursor(int x, y)
 }
 std::array<int, 2> getEyePos(std::string LR)
 {
-	std::array eyePosition
+	std::array eyePosition;
 	return eyePosition;
 }
