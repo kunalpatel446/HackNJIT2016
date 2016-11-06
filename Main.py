@@ -54,19 +54,15 @@ while True:
 			leftY.append(y)
 			leftWidth.append(w)
 			leftHeight.append(h)
-		if eyeL is not None:
+		if len(eyeL):
 			medX = numpy.array(leftX)
 			medX = int(numpy.median(medX))
-			print "medX is ", medX
 			medY = numpy.array(leftY)
 			medY = int(numpy.median(medY))
-			print "medY is ", medY
 			medWidth = numpy.array(leftWidth)
 			medWidth = int(numpy.median(medWidth))
-			print "median width is ", medWidth
 			medHeight = numpy.array(leftHeight)
 			medHeight = int(numpy.median(medHeight))
-			print "median height is ", medHeight
 			cv2.rectangle(img, (medX + xf,medY + yf), (medX + xf + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			leftImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX):(xf + medX + medWidth)]
 			#cv2.imshow("img", leftImg)
@@ -77,7 +73,7 @@ while True:
 			rightY.append(y)
 			rightWidth.append(w)
 			rightHeight.append(h)
-		if eyeR is not None:
+		if len(eyeR):
 			medX = numpy.array(rightX)
 			medX = int(numpy.median(medX))
 			medY = numpy.array(rightY)
@@ -88,17 +84,16 @@ while True:
 			medHeight = int(numpy.median(medHeight))
 			cv2.rectangle(img, (medX + xf + wf/2,medY + yf), (medX + xf + wf/2 + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			rightImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX + wf/2):(xf + medX + medWidth + wf/2)]
-
-			cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV);
-		inRange(imgHSV, Scalar(lowH, lowS, lowV), Scalar(highH, highS, highV), imgThresholded);
-		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+			imgGray = cv2.cvtColor(rightImg, cv2.COLOR_BGR2GRAY)
+			M = cv2.moments(imgGray)
+			if int(M['m00']) > 10000:
+				posX = int(M['m10']/M['m00'])
+				posY = int(M['m01']/M['m00'])
+				cv2.circle(img, (2 * posX + medX + xf, posY + medY + yf), 2, (0, 0, 255), 3)
+			cv2.imshow("img",img)
 
 			# hsv = cv2.cvtColor(rightImg, cv2.COLOR_BGR2HSV)
-			# lower_range = numpy.array([0,0,0])
-			# higher_range = numpy.array([100,100,100])
+			
 			# mask = cv2.inRange(hsv, lower_range,higher_range)
 			# res = cv2.bitwise_and(rightImg, rightImg, mask= mask)
 			# cv2.imshow('frame',res)
