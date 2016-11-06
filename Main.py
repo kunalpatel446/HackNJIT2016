@@ -21,23 +21,22 @@ accuracyCount = 10
 def rectCenter(rect):
 	x, y, w, h = rect
 	return numpy.array((x + 0.5 * w, y + 0.5 * h))
-#def pupilCenter(img):
-	# inputs the median image
-	# no outputs ATM, but draws dot on center. Later outputs coordinates of center
+def moveCursor(img):
+	# inputs the eye image
+	# triggers mouse movement on eye direction
 	# from Hough Transforms documentation
-	#img = cv2.medianBlur(img, 5)
+	img = cv2.medianBlur(img, 5)
+	h, w = img.shape[:2]
 	#cv2.imshow("img", img)
-	# cimg = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
-	# circles = cv2.HoughCircles(img, cv.CV_HOUGH_GRADIENT, 1, 20)
+	# cimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+	# circles = cv2.HoughCircles(cimg, cv.CV_HOUGH_GRADIENT, 1, 20,param1=50,param2=30,minRadius=0,maxRadius=0)
 	# print "circles are ", circles
 	# if circles is not None:
 	# 	circles = numpy.around(circles)
 	# 	circles = numpy.uint16(circles)
 	# 	for i in circles[0,:]:
-	# 		cv2.circle(cimg,(i[0],i[2]),(0,255,0),2)
-	#threshold = cv2.inRange(cimg,250,255)		#get the blobs
-	#contours, hierarchy = cv2.findContours(threshold,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-	#print len(contours)
+	# 		cv2.circle(img,(i[0],i[1]),2,(0,255,0),3)
+
 while True:
 	ok, img = cam.read()
 	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -71,7 +70,7 @@ while True:
 			cv2.rectangle(img, (medX + xf,medY + yf), (medX + xf + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			leftImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX):(xf + medX + medWidth)]
 			#cv2.imshow("img", leftImg)
-			#pupilCenter(leftImg)
+			moveCursor(leftImg)
 		eyeR = eyeCascade.detectMultiScale(roiR)
 		for (x, y, w, h) in eyeR:
 			rightX.append(x)
@@ -89,7 +88,31 @@ while True:
 			medHeight = int(numpy.median(medHeight))
 			cv2.rectangle(img, (medX + xf + wf/2,medY + yf), (medX + xf + wf/2 + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			rightImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX + wf/2):(xf + medX + medWidth + wf/2)]
-			cv2.imshow("img",rightImg)
+
+			cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV);
+		inRange(imgHSV, Scalar(lowH, lowS, lowV), Scalar(highH, highS, highV), imgThresholded);
+		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+
+			# hsv = cv2.cvtColor(rightImg, cv2.COLOR_BGR2HSV)
+			# lower_range = numpy.array([0,0,0])
+			# higher_range = numpy.array([100,100,100])
+			# mask = cv2.inRange(hsv, lower_range,higher_range)
+			# res = cv2.bitwise_and(rightImg, rightImg, mask= mask)
+			# cv2.imshow('frame',res)
+			#print hsv.size() 
+			#print lower_range.size()
+			#print higher_range.size()
+			#cv2.imshow('mask',mask)
+			#cv2.imshow('res',res)
+			#k = cv2.waitKey(5) & 0xFF
+			#if k == 27: 
+			#	break
+
+
+			#cv2.imshow("img",rightImg)
 		#cv2.imshow("img", img)
 	if (cv2.waitKey(30) == 27):
 		break
