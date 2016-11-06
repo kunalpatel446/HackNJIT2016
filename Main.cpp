@@ -15,7 +15,7 @@ CGEventRef move;
 CascadeClassifier faceCascade, eyeCascade;
 bool bSuccess;
 Mat frame, eyeTpl;
-Rect eyeBb
+Rect eyeBb;
 int main(int argc, char** argv)
 {
 	std::cout << "Program initiated by user" << std::endl;
