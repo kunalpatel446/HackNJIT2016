@@ -25,6 +25,7 @@ CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/imgproc/imgproc.hpp
 CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/imgproc/imgproc_c.h
 CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/imgproc/types_c.h
 CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/ml/ml.hpp
+CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/objdetect.hpp
 CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/objdetect/objdetect.hpp
 CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/opencv.hpp
 CMakeFiles/Main.dir/Main.cpp.o: /usr/local/include/opencv2/opencv_modules.hpp
