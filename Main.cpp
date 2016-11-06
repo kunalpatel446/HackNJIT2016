@@ -13,45 +13,17 @@
 using namespace cv;
 CGEventRef move;
 CascadeClassifier faceCascade, eyeCascade;
-bool bSuccess;
-Mat frame, eyeTpl;
-Rect eyeBb;
-int main(int argc, char** argv)
+Mat computeMatXGradient(const cv::Mat &mat)
 {
-	std::cout << "Program initiated by user" << std::endl;
-	faceCascade.load("haarcascade_frontalface_default.xml");
-	eyeCascade.load("haarcascade_eye.xml");
-	VideoCapture cap(0);
-
-	if (!cap.isOpened())
+	Mat out(mat.rows, mat.cols, CV_64F);
+	for (int y = 0; y < mat.rows; ++y)
 	{
-		std::cout << "ERROR: Some shit broke fam..." << std::endl;
-		return -1;
+		const uchar* Mr = mat.ptr<uchar>(y);
+		double* Or = out.ptr<double>(y);
+		Or[0] = Mr[1] - Mr[0];
+		for (int i = 0; i < mat.cols - 1; ++i)
+			Or[i] = (Mr[x + 1] - Mr[x - 1]) / 2.0;
+		Or[mat.cols - 1] = Mr[mat.cols - 1] - Mr[mat.cols - 2];
 	}
-	else
-		std::cout << "Webcam initiated" << std::endl;
-	namedWindow("Hack NJIT 2016", CV_WINDOW_AUTOSIZE);
-	bSuccess = cap.read(imgTmp);
-	while(true)
-	{
-		//moveCursor(getEyePos());
-		bSuccess = cap.read(imgOriginal);
-		if (!bSuccess)
-		{
-			std::cout << "Frame dropped" << std::endl;
-			break;
-		}
-		imshow("HackTCNJ2016", imgOriginal);
-		if (waitKey(30) == 27)
-		{
-			std::cout << "Program terminated by user" << std::endl;
-			break;
-		}
-	}
-	return 0;
+	return out;
 }
-void moveCursor(int *loc)
-{
-	//move = CGEventCreateMouseEvent(NULL, kCGEventMouseMoved, CGPointMake(loc[0], loc[1]), kCGMouseButtonLeft);
-}
-int detectEye(Mat im )

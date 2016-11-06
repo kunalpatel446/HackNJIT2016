@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Main
+# Target rules for targets named eyedetect
 
 # Build rule for target.
-Main: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Main
-.PHONY : Main
+eyedetect: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 eyedetect
+.PHONY : eyedetect
 
 # fast build rule for target.
-Main/fast:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/build
-.PHONY : Main/fast
+eyedetect/fast:
+	$(MAKE) -f CMakeFiles/eyedetect.dir/build.make CMakeFiles/eyedetect.dir/build
+.PHONY : eyedetect/fast
 
-Main.o: Main.cpp.o
+eyedetect.o: eyedetect.cpp.o
 
-.PHONY : Main.o
+.PHONY : eyedetect.o
 
 # target to build an object file
-Main.cpp.o:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.o
-.PHONY : Main.cpp.o
+eyedetect.cpp.o:
+	$(MAKE) -f CMakeFiles/eyedetect.dir/build.make CMakeFiles/eyedetect.dir/eyedetect.cpp.o
+.PHONY : eyedetect.cpp.o
 
-Main.i: Main.cpp.i
+eyedetect.i: eyedetect.cpp.i
 
-.PHONY : Main.i
+.PHONY : eyedetect.i
 
 # target to preprocess a source file
-Main.cpp.i:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.i
-.PHONY : Main.cpp.i
+eyedetect.cpp.i:
+	$(MAKE) -f CMakeFiles/eyedetect.dir/build.make CMakeFiles/eyedetect.dir/eyedetect.cpp.i
+.PHONY : eyedetect.cpp.i
 
-Main.s: Main.cpp.s
+eyedetect.s: eyedetect.cpp.s
 
-.PHONY : Main.s
+.PHONY : eyedetect.s
 
 # target to generate assembly for a file
-Main.cpp.s:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/Main.cpp.s
-.PHONY : Main.cpp.s
+eyedetect.cpp.s:
+	$(MAKE) -f CMakeFiles/eyedetect.dir/build.make CMakeFiles/eyedetect.dir/eyedetect.cpp.s
+.PHONY : eyedetect.cpp.s
 
 # Help Target
 help:
@@ -158,10 +158,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... Main"
-	@echo "... Main.o"
-	@echo "... Main.i"
-	@echo "... Main.s"
+	@echo "... eyedetect"
+	@echo "... eyedetect.o"
+	@echo "... eyedetect.i"
+	@echo "... eyedetect.s"
 .PHONY : help
 
 
