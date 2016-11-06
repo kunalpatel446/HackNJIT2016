@@ -1,6 +1,4 @@
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
 #include <cstdlib>
 #include <string>
 #include <vector>
@@ -9,68 +7,87 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/objdetect.hpp>
 #include <ApplicationServices/ApplicationServices.h>
 #include <unistd.h>
-
-#include <opencv2/objdetect.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-
 using namespace cv;
-//using namespace std;
 
+CGEventRef move;
+CascadeClassifier faceCascade, eyeCascade;
+bool bSuccess;
+Mat frame, eyeTpl;
+cv::Rect eyeBb;
 
- /** Function Headers */
- void detectAndDisplay( Mat frame );
+void detectAndDisplay(Mat frame)
+{
+  cv::Rect rect;
+  std::vector<cv::Rect> faces, eyes;
+  Mat frame_gray;
 
- /** Global variables */
- std::string face_cascade_name = "haarcascade_frontalface_alt.xml";
- std::string eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
- CascadeClassifier face_cascade;
- CascadeClassifier eyes_cascade;
- std::string window_name = "Capture - Face detection";
- RNG rng(12345);
+  cvtColor( frame, frame_gray, CV_BGR2GRAY );
+  equalizeHist( frame_gray, frame_gray );
 
- /** @function main */
- int main( int argc, const char** argv )
- {
-   VideoCapture cap(0);
-   if(!cap.isOpened())
-   		return -1;
-   cv::Mat frame;
-   cv::Mat frame_gray;
-   std::vector<cv::Rect> faces;
+  //-- Detect faces
+  faceCascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
 
+  for(int i=0; i<faces.size(); i++)
+  {
+    Mat face = frame_gray(faces[i]);
+    eyeCascade.detectMultiScale(face, eyes, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(20,20));
+    for(int j=0; j<eyes.size(); j++)
+    {
+      //-- draw rectangles on all eyes
+      rect = eyes[0] + cv::Point(faces[i].x, faces[i].y);
+    }
 
-   //-- 1. Load the cascades
-   if( !face_cascade.load( face_cascade_name ) ){ printf("--(!)Error loading\n"); return -1; };
-   if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("--(!)Error loading\n"); return -1; };
-
-   //-- 2. Read the video stream
-   cap.read(frame);
-   frame = cvQueryFrame( capture );
-
-   //-- 3. Apply the classifier to the frame
-       if( !frame.empty() ){
-
-       	// display the frame
-        //{ detectAndDisplay( frame ); }
-       	// greyscale and downsample
-  		cv::cvtColor( frame, frame_gray, CV_BGR2GRAY );
-  		cv::equalizeHist( frame_gray, frame_gray );
-
-  		face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
-  		}
-       else{ 
-       		printf(" --(!) No captured frame -- Break!"); break; 
-       	}
-
-       if(waitKey(30) == 27){
-       		break;
-       	}
-   }
-   return 0;
- }
+  }
 }
+
+int main(int argc, char** argv)
+{
+  std::cout << "Program initiated by user" << std::endl;
+  faceCascade.load("haarcascade_frontalface_default.xml");
+  eyeCascade.load("haarcascade_eye.xml");
+  VideoCapture cap(0);
+  Mat frame;
+
+  if (!cap.isOpened())
+  {
+    std::cout << "ERROR: Some shit broke fam..." << std::endl;
+    return -1;
+  }
+  else
+    std::cout << "Webcam initiated" << std::endl;
+  namedWindow("Hack NJIT 2016", CV_WINDOW_AUTOSIZE);
+  bSuccess = cap.read(frame);
+  while(true)
+  {
+    //moveCursor(getEyePos());
+    bSuccess = cap.read(frame);
+    if (!bSuccess)
+    {
+      std::cout << "Frame dropped" << std::endl;
+      break;
+    }
+
+    if(!frame.empty())
+    {
+      detectAndDisplay(frame); 
+    }
+    else
+    { 
+      printf(" --(!) No captured frame -- Break!"); break; 
+    }
+
+    imshow("HackTCNJ2016", frame);
+    if (waitKey(30) == 27)
+    {
+      std::cout << "Program terminated by user" << std::endl;
+      break;
+    }
+  }
+  return 0;
+}
+
 
 
