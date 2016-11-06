@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 #include <cstdlib>
 #include <string>
 #include <vector>
@@ -16,14 +17,19 @@
 #include <opencv2/imgproc.hpp>
 
 using namespace cv;
+//using namespace std;
+
+
+ /** Function Headers */
+ void detectAndDisplay( Mat frame );
 
  /** Global variables */
- std::string face_cascade_name = "haarcascade_frontalface_default.xml";
- std::string eyes_cascade_name = "haarcascade_eye.xml";
- cv::CascadeClassifier face_cascade;
- cv::CascadeClassifier eyes_cascade;
+ std::string face_cascade_name = "haarcascade_frontalface_alt.xml";
+ std::string eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
+ CascadeClassifier face_cascade;
+ CascadeClassifier eyes_cascade;
  std::string window_name = "Capture - Face detection";
- cv::RNG rng(12345);
+ RNG rng(12345);
 
  /** @function main */
  int main( int argc, const char** argv )
