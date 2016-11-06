@@ -2,6 +2,17 @@ import cv2
 import numpy
 import sys
 import cv2.cv as cv
+
+from Quartz.CoreGraphics import CGEventCreateMouseEvent
+from Quartz.CoreGraphics import CGEventPost
+from Quartz.CoreGraphics import kCGEventMouseMoved
+from Quartz.CoreGraphics import kCGEventLeftMouseDown
+from Quartz.CoreGraphics import kCGEventLeftMouseDown
+from Quartz.CoreGraphics import kCGEventLeftMouseUp
+from Quartz.CoreGraphics import kCGMouseButtonLeft
+from Quartz.CoreGraphics import kCGHIDEventTap
+
+
 faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 eyeCascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 cam = cv2.VideoCapture(0)
@@ -18,24 +29,37 @@ rightY = []
 rightWidth = []
 rightHeight = []
 accuracyCount = 10
+
+def mouseEvent(type, posx, posy):
+    	theEvent = CGEventCreateMouseEvent(
+                    None, 
+                    type, 
+                    (posx,posy), 
+                    kCGMouseButtonLeft)
+        CGEventPost(kCGHIDEventTap, theEvent)
+
+def mousemove(posx,posy):
+        mouseEvent(kCGEventMouseMoved, posx,posy);
+
+def mouseclick(posx,posy):
+        # uncomment this line if you want to force the mouse 
+        # to MOVE to the click location first (I found it was not necessary).
+        #mouseEvent(kCGEventMouseMoved, posx,posy);
+        mouseEvent(kCGEventLeftMouseDown, posx,posy);
+        mouseEvent(kCGEventLeftMouseUp, posx,posy);
+
 def rectCenter(rect):
 	x, y, w, h = rect
 	return numpy.array((x + 0.5 * w, y + 0.5 * h))
-def moveCursor(img):
+def moveCursor(img, posX, posY):
 	# inputs the eye image
 	# triggers mouse movement on eye direction
 	# from Hough Transforms documentation
-	img = cv2.medianBlur(img, 5)
-	h, w = img.shape[:2]
-	#cv2.imshow("img", img)
-	# cimg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-	# circles = cv2.HoughCircles(cimg, cv.CV_HOUGH_GRADIENT, 1, 20,param1=50,param2=30,minRadius=0,maxRadius=0)
-	# print "circles are ", circles
-	# if circles is not None:
-	# 	circles = numpy.around(circles)
-	# 	circles = numpy.uint16(circles)
-	# 	for i in circles[0,:]:
-	# 		cv2.circle(img,(i[0],i[1]),2,(0,255,0),3)
+	height, width = img.shape[:2]
+	xdiff = posX/width
+	ydiff = posY/height
+	mousemove(xdiff, ydiff)
+
 
 while True:
 	ok, img = cam.read()
@@ -43,7 +67,7 @@ while True:
 	faces = faceCascade.detectMultiScale(gray, 1.3, 5)
 	countL = 0
 	for (xf, yf, wf, hf) in faces:
-		cv2.rectangle(img, (xf, yf), (xf + wf, yf + hf), (255, 0, 0), 2)
+		#cv2.rectangle(img, (xf, yf), (xf + wf, yf + hf), (255, 0, 0), 2)
 		roiGray = gray[yf:yf + hf, xf:xf + wf]
 		roiColor = img[yf:yf + hf, xf:xf + wf]
 		roiL = gray[yf:yf + hf/2, xf:xf + wf/2]
@@ -63,10 +87,16 @@ while True:
 			medWidth = int(numpy.median(medWidth))
 			medHeight = numpy.array(leftHeight)
 			medHeight = int(numpy.median(medHeight))
-			cv2.rectangle(img, (medX + xf,medY + yf), (medX + xf + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
+			#cv2.rectangle(img, (medX + xf,medY + yf), (medX + xf + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			leftImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX):(xf + medX + medWidth)]
-			#cv2.imshow("img", leftImg)
-			moveCursor(leftImg)
+			imgGray = cv2.cvtColor(leftImg, cv2.COLOR_BGR2GRAY)
+			M = cv2.moments(imgGray)
+			if int(M['m00']) > 10000:
+				posX1 = int(M['m10']/M['m00'])
+				posY1 = int(M['m01']/M['m00'])
+				cv2.circle(img, (2 * posX + medX + xf, posY + medY + yf), 2, (0, 0, 255), 3)
+			cv2.imshow("img",img)
+
 		eyeR = eyeCascade.detectMultiScale(roiR)
 		for (x, y, w, h) in eyeR:
 			rightX.append(x)
@@ -82,33 +112,17 @@ while True:
 			medWidth = int(numpy.median(medWidth))
 			medHeight = numpy.array(rightHeight)
 			medHeight = int(numpy.median(medHeight))
-			cv2.rectangle(img, (medX + xf + wf/2,medY + yf), (medX + xf + wf/2 + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
+			#cv2.rectangle(img, (medX + xf + wf/2,medY + yf), (medX + xf + wf/2 + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			rightImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX + wf/2):(xf + medX + medWidth + wf/2)]
 			imgGray = cv2.cvtColor(rightImg, cv2.COLOR_BGR2GRAY)
 			M = cv2.moments(imgGray)
 			if int(M['m00']) > 10000:
-				posX = int(M['m10']/M['m00'])
-				posY = int(M['m01']/M['m00'])
+				posX2 = int(M['m10']/M['m00'])
+				posY2 = int(M['m01']/M['m00'])
 				cv2.circle(img, (2 * posX + medX + xf, posY + medY + yf), 2, (0, 0, 255), 3)
 			cv2.imshow("img",img)
-
-			# hsv = cv2.cvtColor(rightImg, cv2.COLOR_BGR2HSV)
-			
-			# mask = cv2.inRange(hsv, lower_range,higher_range)
-			# res = cv2.bitwise_and(rightImg, rightImg, mask= mask)
-			# cv2.imshow('frame',res)
-			#print hsv.size() 
-			#print lower_range.size()
-			#print higher_range.size()
-			#cv2.imshow('mask',mask)
-			#cv2.imshow('res',res)
-			#k = cv2.waitKey(5) & 0xFF
-			#if k == 27: 
-			#	break
-
-
-			#cv2.imshow("img",rightImg)
-		#cv2.imshow("img", img)
+		moveCursor(rightImg, posX1, posY1, posX2, posY2)
+		cv2.imshow("img", img)
 	if (cv2.waitKey(30) == 27):
 		break
 cv2.destroyAllWindows()
