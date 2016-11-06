@@ -29,6 +29,11 @@ rightY = []
 rightWidth = []
 rightHeight = []
 accuracyCount = 10
+medX = 0
+medY = 0
+tempMedX = 0
+tempMedY = 0
+medWidth = 0.8
 
 def mouseEvent(type, posx, posy):
     	theEvent = CGEventCreateMouseEvent(
@@ -51,6 +56,7 @@ def mouseclick(posx,posy):
 def rectCenter(rect):
 	x, y, w, h = rect
 	return numpy.array((x + 0.5 * w, y + 0.5 * h))
+
 def moveCursor(img, posX1, posY1, posX2, posY2):
 	# inputs the eye image
 	# triggers mouse movement on eye direction
@@ -92,10 +98,12 @@ while True:
 			leftImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX):(xf + medX + medWidth)]
 			imgGray = cv2.cvtColor(leftImg, cv2.COLOR_BGR2GRAY)
 			M = cv2.moments(imgGray)
+			tempMedX = medX
+			tempMedY = medY
 			if int(M['m00']) > 10000:
-				posX1 = int(M['m10']/M['m00'])
+				posX1 = int(M['m10']/M['m00']) * 6 + 15
 				posY1 = int(M['m01']/M['m00'])
-				cv2.circle(img, (4 * posX1 + medX + xf, posY1 + medY + yf), 2, (0, 0, 255), 3)
+				cv2.circle(img, (posX1 + medX + xf, posY1 + medY + yf), 2, (0, 0, 255), 3)
 			#cv2.imshow("img",img)
 
 		eyeR = eyeCascade.detectMultiScale(roiR)
@@ -118,14 +126,18 @@ while True:
 			imgGray = cv2.cvtColor(rightImg, cv2.COLOR_BGR2GRAY)
 			M = cv2.moments(imgGray)
 			if int(M['m00']) > 10000:
-				posX2 = int(M['m10']/M['m00'])
+				posX2 = int(M['m10']/M['m00']) + 15
 				posY2 = int(M['m01']/M['m00'])
-				cv2.circle(img, (2 * posX2 + medX + xf, posY2 + medY + yf), 2, (0, 0, 255), 3)
+				cv2.circle(img, (posX2 + medX + xf, posY2 + medY + yf), 2, (0, 0, 255), 3)
 			#cv2.imshow("img",img)`
-			xperc, yperc = moveCursor(img, posX1, posY1, posX2, posY2)
+			#xperc, yperc = moveCursor(img, medX + xf, medY + yf, tempMedX + xf, tempMedY + yf)
+			xperc = (medX + tempMedX + 2 * xf + posX1) / medWidth
+			yperc = (medY + tempMedY + 2 * yf + posX2) / medWidth
 			height, width = img.shape[:2]
-			xpos = xperc*width
-			ypos = yperc*height
+			xpos = xperc * width
+			ypos = yperc * height
+			print xpos
+			print ypos
 			mousemove(xpos,ypos)
 		cv2.imshow("img", img)
 	if (cv2.waitKey(30) == 27):
