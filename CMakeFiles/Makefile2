@@ -60,39 +60,39 @@ CMAKE_SOURCE_DIR = /Users/kunalpatel/Desktop/Hackathons/HackNJIT/2016/HackNJIT20
 CMAKE_BINARY_DIR = /Users/kunalpatel/Desktop/Hackathons/HackNJIT/2016/HackNJIT2016
 
 #=============================================================================
-# Target rules for target CMakeFiles/Main.dir
+# Target rules for target CMakeFiles/eyedetect.dir
 
 # All Build rule for target.
-CMakeFiles/Main.dir/all:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/depend
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/kunalpatel/Desktop/Hackathons/HackNJIT/2016/HackNJIT2016/CMakeFiles --progress-num=1,2 "Built target Main"
-.PHONY : CMakeFiles/Main.dir/all
+CMakeFiles/eyedetect.dir/all:
+	$(MAKE) -f CMakeFiles/eyedetect.dir/build.make CMakeFiles/eyedetect.dir/depend
+	$(MAKE) -f CMakeFiles/eyedetect.dir/build.make CMakeFiles/eyedetect.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/kunalpatel/Desktop/Hackathons/HackNJIT/2016/HackNJIT2016/CMakeFiles --progress-num=1,2 "Built target eyedetect"
+.PHONY : CMakeFiles/eyedetect.dir/all
 
 # Include target in all.
-all: CMakeFiles/Main.dir/all
+all: CMakeFiles/eyedetect.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/Main.dir/rule: cmake_check_build_system
+CMakeFiles/eyedetect.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kunalpatel/Desktop/Hackathons/HackNJIT/2016/HackNJIT2016/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Main.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/eyedetect.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kunalpatel/Desktop/Hackathons/HackNJIT/2016/HackNJIT2016/CMakeFiles 0
-.PHONY : CMakeFiles/Main.dir/rule
+.PHONY : CMakeFiles/eyedetect.dir/rule
 
 # Convenience name for target.
-Main: CMakeFiles/Main.dir/rule
+eyedetect: CMakeFiles/eyedetect.dir/rule
 
-.PHONY : Main
-
-# clean rule for target.
-CMakeFiles/Main.dir/clean:
-	$(MAKE) -f CMakeFiles/Main.dir/build.make CMakeFiles/Main.dir/clean
-.PHONY : CMakeFiles/Main.dir/clean
+.PHONY : eyedetect
 
 # clean rule for target.
-clean: CMakeFiles/Main.dir/clean
+CMakeFiles/eyedetect.dir/clean:
+	$(MAKE) -f CMakeFiles/eyedetect.dir/build.make CMakeFiles/eyedetect.dir/clean
+.PHONY : CMakeFiles/eyedetect.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/eyedetect.dir/clean
 
 .PHONY : clean
 

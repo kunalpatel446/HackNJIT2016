@@ -4,6 +4,7 @@
 #include <vector>
 #include <array>
 #include <cmath>
+#include <thread>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -11,46 +12,37 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <unistd.h>
 using namespace cv;
-
 CGEventRef move;
 CascadeClassifier faceCascade, eyeCascade;
 bool bSuccess;
 Mat frame, eyeTpl;
 cv::Rect eyeBb;
-
-void detectAndDisplay(Mat frame)
+std::vector<cv::Rect> faces, eyes;
+cv::Rect rect;
+void detectAndDisplay()
 {
-  cv::Rect rect;
-  std::vector<cv::Rect> faces, eyes;
   Mat frame_gray;
-
   cvtColor( frame, frame_gray, CV_BGR2GRAY );
   equalizeHist( frame_gray, frame_gray );
-
   //-- Detect faces
   faceCascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
-
-  for(int i=0; i<faces.size(); i++)
+  for(int i = 0; i < faces.size(); i++)
   {
-    Mat face = frame_gray(faces[i]);
+    Mat face = frame_gray(faces[0]);
     eyeCascade.detectMultiScale(face, eyes, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(20,20));
-    for(int j=0; j<eyes.size(); j++)
-    {
-      //-- draw rectangles on all eyes
-      rect = eyes[0] + cv::Point(faces[i].x, faces[i].y);
-    }
-
   }
 }
-
+void drawRects()
+{
+  for(int i = 0; i < eyes.size(); i++)
+    rect = eyes[i] + cv::Point(faces[0].x, faces[0].y);
+}
 int main(int argc, char** argv)
 {
   std::cout << "Program initiated by user" << std::endl;
   faceCascade.load("haarcascade_frontalface_default.xml");
   eyeCascade.load("haarcascade_eye.xml");
   VideoCapture cap(0);
-  Mat frame;
-
   if (!cap.isOpened())
   {
     std::cout << "ERROR: Some shit broke fam..." << std::endl;
@@ -69,16 +61,17 @@ int main(int argc, char** argv)
       std::cout << "Frame dropped" << std::endl;
       break;
     }
-
     if(!frame.empty())
     {
-      detectAndDisplay(frame); 
+      std::thread first (detectAndDisplay);
+      std::thread second (drawRects);
+      first.join();
+      second.join();
     }
     else
-    { 
-      printf(" --(!) No captured frame -- Break!"); break; 
+    {
+      printf(" --(!) No captured frame -- Break!"); break;
     }
-
     imshow("HackTCNJ2016", frame);
     if (waitKey(30) == 27)
     {
@@ -88,6 +81,3 @@ int main(int argc, char** argv)
   }
   return 0;
 }
-
-
-
