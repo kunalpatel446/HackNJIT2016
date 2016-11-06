@@ -51,15 +51,16 @@ def mouseclick(posx,posy):
 def rectCenter(rect):
 	x, y, w, h = rect
 	return numpy.array((x + 0.5 * w, y + 0.5 * h))
-def moveCursor(img, posX, posY):
+def moveCursor(img, posX1, posY1, posX2, posY2):
 	# inputs the eye image
 	# triggers mouse movement on eye direction
 	# from Hough Transforms documentation
 	height, width = img.shape[:2]
-	xdiff = posX/width
-	ydiff = posY/height
-	mousemove(xdiff, ydiff)
-
+	xavg = (posX1 + posX2)/2
+	yavg = (posY1 + posY2)/2
+	xperc = xavg/width
+	yperc = yavg/height
+	return xperc, yperc
 
 while True:
 	ok, img = cam.read()
@@ -87,15 +88,15 @@ while True:
 			medWidth = int(numpy.median(medWidth))
 			medHeight = numpy.array(leftHeight)
 			medHeight = int(numpy.median(medHeight))
-			#cv2.rectangle(img, (medX + xf,medY + yf), (medX + xf + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
+			cv2.rectangle(img, (medX + xf,medY + yf), (medX + xf + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			leftImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX):(xf + medX + medWidth)]
 			imgGray = cv2.cvtColor(leftImg, cv2.COLOR_BGR2GRAY)
 			M = cv2.moments(imgGray)
 			if int(M['m00']) > 10000:
 				posX1 = int(M['m10']/M['m00'])
 				posY1 = int(M['m01']/M['m00'])
-				cv2.circle(img, (2 * posX + medX + xf, posY + medY + yf), 2, (0, 0, 255), 3)
-			cv2.imshow("img",img)
+				cv2.circle(img, (4 * posX1 + medX + xf, posY1 + medY + yf), 2, (0, 0, 255), 3)
+			#cv2.imshow("img",img)
 
 		eyeR = eyeCascade.detectMultiScale(roiR)
 		for (x, y, w, h) in eyeR:
@@ -112,16 +113,20 @@ while True:
 			medWidth = int(numpy.median(medWidth))
 			medHeight = numpy.array(rightHeight)
 			medHeight = int(numpy.median(medHeight))
-			#cv2.rectangle(img, (medX + xf + wf/2,medY + yf), (medX + xf + wf/2 + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
+			cv2.rectangle(img, (medX + xf + wf/2,medY + yf), (medX + xf + wf/2 + medWidth, medY + yf + medHeight), (255, 0, 0), 2)
 			rightImg = img[(medY + yf):(yf + medY + medHeight), (xf + medX + wf/2):(xf + medX + medWidth + wf/2)]
 			imgGray = cv2.cvtColor(rightImg, cv2.COLOR_BGR2GRAY)
 			M = cv2.moments(imgGray)
 			if int(M['m00']) > 10000:
 				posX2 = int(M['m10']/M['m00'])
 				posY2 = int(M['m01']/M['m00'])
-				cv2.circle(img, (2 * posX + medX + xf, posY + medY + yf), 2, (0, 0, 255), 3)
-			cv2.imshow("img",img)
-		moveCursor(rightImg, posX1, posY1, posX2, posY2)
+				cv2.circle(img, (2 * posX2 + medX + xf, posY2 + medY + yf), 2, (0, 0, 255), 3)
+			#cv2.imshow("img",img)`
+			xperc, yperc = moveCursor(img, posX1, posY1, posX2, posY2)
+			height, width = img.shape[:2]
+			xpos = xperc*width
+			ypos = yperc*height
+			mousemove(xpos,ypos)
 		cv2.imshow("img", img)
 	if (cv2.waitKey(30) == 27):
 		break
